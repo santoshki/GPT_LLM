@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BlueTech AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">BlueTech AI</div>
+        <button class="new-chat">New Chat</button>
+        <div class="history" id="history"></div>
+    </div>
+
+    <!-- Main Chat -->
+    <div class="main">
+
+        <div id="welcomeText" class="welcome-text">
+            How may I help you?
+        </div>
+
+        <div class="chat-area" id="chat-area"></div>
+
+        <!-- Floating Glass Input -->
+        <div class="input-wrapper">
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="Send a message..."
+            />
+            <button id="sendBtn">➤</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
