@@ -12,7 +12,7 @@ print("Using device:", device)
 # -------------------------
 # Load Vocabulary
 # -------------------------
-with open("vocab.json", "r") as f:
+with open("../vocab.json", "r") as f:
     vocab_data = json.load(f)
 
 stoi = vocab_data["stoi"]
@@ -113,7 +113,7 @@ class SimpleGPT(nn.Module):
 # -------------------------
 model = SimpleGPT().to(device)
 model.load_state_dict(
-    torch.load("mini_llm.pt", map_location=device, weights_only=True)
+    torch.load("../mini_llm.pt", map_location=device, weights_only=True)
 )
 model.eval()
 print("Model loaded successfully!")

@@ -163,9 +163,3 @@ def get_model_response(prompt, max_new_tokens=100):
             break
 
     return generated_text[len(prompt):]  # return only the generated part
-
-if __name__ == "__main__":
-    while True:
-        user_input = input("You: ")
-        response = get_model_response(user_input)
-        print("Model:", response)
