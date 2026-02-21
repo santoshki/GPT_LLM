@@ -26,33 +26,40 @@ eval_interval = 300
 # -------------------------
 # Generate math dataset if missing
 # -------------------------
-if not os.path.exists("data.txt"):
-    print("Generating math dataset...")
-    ops = ['+', '-', '*', '/']
-    examples = []
-
-    for _ in range(5000):
-        a = random.randint(1, 100)
-        b = random.randint(1, 100)
-        op = random.choice(ops)
-
-        if op == '/':
-            a = a * b  # make division exact
-
-        question = f"Q: {a} {op} {b}\nA: "
-        answer = str(eval(f"{a}{op}{b}"))
-        examples.append(question + answer)
-
-    with open("data.txt", "w", encoding="utf-8") as f:
-        for line in examples:
-            f.write(line + "\n\n")
-    print("Math dataset generated with 5000 examples.")
+# if not os.path.exists("../data.txt"):
+#     print("Generating math dataset...")
+#     ops = ['+', '-', '*', '/']
+#     examples = []
+#
+#     for _ in range(5000):
+#         a = random.randint(1, 100)
+#         b = random.randint(1, 100)
+#         op = random.choice(ops)
+#
+#         if op == '/':
+#             a = a * b  # make division exact
+#
+#         question = f"Q: {a} {op} {b}\nA: "
+#         answer = str(eval(f"{a}{op}{b}"))
+#         examples.append(question + answer)
+#
+#     with open("../training-data/arithmetic.txt", "w", encoding="utf-8") as f:
+#         for line in examples:
+#             f.write(line + "\n\n")
+#     print("Math dataset generated with 5000 examples.")
 
 # -------------------------
 # Load Text Data
 # -------------------------
-with open("data.txt", "r", encoding="utf-8") as f:
-    text = f.read()
+training_data_filepath = "C:\\Users\\santo\\PycharmProjects\\GPT\\training-data"
+files = [training_data_filepath + "\\arithmetic.txt", training_data_filepath + "\\general.txt"]
+
+text = ""
+for file in files:
+    with open(file, "r", encoding="utf-8") as f:
+        text += f.read() + "\n\n"
+# with open("../training-data/arithmetic.txt", "r", encoding="utf-8") as f:
+#     text = f.read()
 
 print("Dataset length:", len(text))
 
@@ -67,7 +74,7 @@ stoi = {ch: i for i, ch in enumerate(chars)}
 itos = {i: ch for i, ch in enumerate(chars)}
 
 # Save vocab
-with open("vocab.json", "w", encoding="utf-8") as f:
+with open("../vocab.json", "w", encoding="utf-8") as f:
     json.dump({"stoi": stoi, "itos": itos}, f)
 print("Vocabulary saved to vocab.json")
 
@@ -184,5 +191,5 @@ for step in range(max_iters):
 # -------------------------
 # Save Model
 # -------------------------
-torch.save(model.state_dict(), "mini_llm.pt")
+torch.save(model.state_dict(), "../mini_llm.pt")
 print("\nTraining complete. Model saved as mini_llm.pt")

@@ -1,0 +1,9 @@
+1+1=2
+2+3=5
+10-7=3
+5*4=20
+12/4=3
+sum of 2 and 3 is 5
+difference between 4 and 2 is 2
+product of 2 and 2 is 4
+division of 4 by 2 is 2
