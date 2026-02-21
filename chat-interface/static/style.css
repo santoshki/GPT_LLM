@@ -1,0 +1,225 @@
+/* Global */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #ffffff;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app {
+    display: flex;
+    height: 100vh;
+}
+
+/* ========================= */
+/* Sidebar */
+/* ========================= */
+
+.sidebar {
+    width: 220px;
+    background: #0f172a;
+    padding: 20px;
+    border-right: 1px solid rgba(56,189,248,0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #38bdf8;
+    margin-bottom: 25px;
+}
+
+.new-chat {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: 0.2s ease;
+}
+
+.new-chat:hover {
+    background: #1d4ed8;
+}
+
+.history {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.history div {
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: #1e293b;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.history div:hover {
+    background: #334155;
+}
+
+/* ========================= */
+/* Main Chat Area */
+/* ========================= */
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: #f8fafc;
+}
+
+/* Centered Welcome Text */
+.welcome-text {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: 600;
+    color: #0f172a;
+    transition: opacity 0.3s ease;
+}
+
+/* Hide welcome after chat starts */
+.main.chat-started .welcome-text {
+    display: none;
+}
+
+/* Chat Area */
+.chat-area {
+    flex: 1;
+    padding: 30px 15%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========================= */
+/* Messages */
+/* ========================= */
+
+.message {
+    margin: 10px 0;
+    padding: 14px 18px;
+    border-radius: 14px;
+    max-width: 65%;
+    line-height: 1.4;
+    font-size: 15px;
+    word-wrap: break-word;
+    animation: fadeIn 0.2s ease-in;
+}
+
+.user {
+    background: #2563eb;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.bot {
+    background: #e2e8f0;
+    color: #0f172a;
+    margin-right: auto;
+    border-bottom-left-radius: 4px;
+}
+
+/* ========================= */
+/* Glass Input Area */
+/* ========================= */
+
+.input-wrapper {
+    position: sticky;
+    bottom: 20px;
+    margin: 0 auto 25px auto;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.6);
+    padding: 10px 15px;
+    border-radius: 50px;
+    border: 1px solid rgba(56,189,248,0.3);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+}
+
+.input-wrapper input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #0f172a;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.input-wrapper button {
+    background: #38bdf8;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    transition: 0.2s ease;
+}
+
+.input-wrapper button:hover {
+    background: #0ea5e9;
+}
+
+/* ========================= */
+/* Animations */
+/* ========================= */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================= */
+/* Scrollbar Styling */
+/* ========================= */
+
+.chat-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-area::-webkit-scrollbar-thumb {
+    background: rgba(56,189,248,0.5);
+    border-radius: 10px;
+}
+
+/* ========================= */
+/* Mobile Responsive */
+/* ========================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .chat-area {
+        padding: 20px;
+    }
+
+    .input-wrapper {
+        width: 92%;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+}
