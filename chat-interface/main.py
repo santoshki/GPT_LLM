@@ -36,7 +36,7 @@ async def websocket_chat(websocket: WebSocket):
             print("User:", user_message)
 
             # Get LLM response
-            bot_response = invoke_llm.get_model_response(user_message)
+            bot_response = invoke_llm.generate_model_response(user_message)
             print("Bot:", bot_response)
 
             # Stream response character-by-character

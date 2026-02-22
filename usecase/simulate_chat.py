@@ -2,12 +2,20 @@ import torch
 import torch.nn as nn
 import json
 import re
+import glob
+import difflib
 
 # -------------------------
 # Device
 # -------------------------
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
+
+STOP_WORDS = {
+    "what", "where", "when", "how", "is", "are",
+    "do", "does", "did", "the", "a", "an",
+    "you", "your", "i", "me", "about"
+}
 
 # -------------------------
 # Load Vocabulary
@@ -27,7 +35,7 @@ d_model = 128
 n_heads = 4
 n_layers = 2
 dropout = 0.1
-block_size = 32
+block_size = 64
 
 # -------------------------
 # Model Definition
@@ -154,6 +162,84 @@ def generate(prompt, max_new_tokens=100):
         return generated_text.split('=')[-1].strip()
     return generated_text[len(prompt):]
 
+
+# -------------------------
+# Load Knowledge Base ONCE
+# -------------------------
+# def load_knowledge(path):
+#     with open(path, "r", encoding="utf-8") as f:
+#         lines = [line.strip() for line in f.readlines() if line.strip()]
+#
+#     # Group into question-answer pairs
+#     knowledge_pairs = []
+#     for i in range(0, len(lines), 2):
+#         if i + 1 < len(lines):
+#             question = lines[i]
+#             answer = lines[i + 1]
+#             knowledge_pairs.append((question, answer))
+#
+#     return knowledge_pairs
+
+def load_all_knowledge(folder_path):
+    knowledge_entries = []
+    files = glob.glob(folder_path + "/*.json")
+
+    for file in files:
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+            # Add category automatically from filename
+            category = file.split("\\")[-1].replace(".json", "")
+
+            for entry in data:
+                entry["category"] = category
+                knowledge_entries.append(entry)
+
+    return knowledge_entries
+
+
+knowledge_base = load_all_knowledge("C:\\Users\\santo\\PycharmProjects\\GPT\\knowledge-base")
+print(f"Loaded {len(knowledge_base)} total knowledge entries.")
+
+
+def normalize(text):
+    text = text.lower()
+    text = re.sub(r'[^a-z0-9\s]', '', text)
+    return text
+
+
+def retrieve(query):
+    query_norm = normalize(query)
+    query_words = {
+        w for w in query_norm.split()
+        if w not in STOP_WORDS
+    }
+
+    best_match = None
+    best_score = 0
+
+    for entry in knowledge_base:
+        question_norm = normalize(entry["question"])
+        question_words = {
+            w for w in question_norm.split()
+            if w not in STOP_WORDS
+        }
+
+        keyword_words = set(entry.get("keywords", []))
+
+        overlap_score = len(query_words & question_words)
+        keyword_score = len(query_words & keyword_words) * 2
+
+        total_score = overlap_score + keyword_score
+
+        if total_score > best_score:
+            best_score = total_score
+            best_match = entry
+
+    if best_score >= 1:
+        return best_match["answer"]
+
+    return None
 # -------------------------
 # Chat loop
 # -------------------------
@@ -172,6 +258,16 @@ while True:
             print("Model:", answer)
             continue
 
-    # Otherwise fallback to model
-    response = generate(user_input, max_new_tokens=150)
-    print("Model:", response)
+    else:
+        # Retrieve from knowledge base
+        retrieved = retrieve(user_input)
+
+        if retrieved:
+            print("Model:", retrieved)
+            continue
+        else:
+            prompt = user_input + "\n"
+            # response = generate(prompt, max_new_tokens=100)
+            # print("Model:", response)
+            response = generate(prompt)
+            print("Model: I don't have information about that yet.")

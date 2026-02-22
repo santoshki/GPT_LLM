@@ -1,0 +1,22 @@
+[
+  {
+    "question": "I am not feeling well",
+    "answer": "If you are not feeling well, rest, stay hydrated, and monitor your symptoms. Consult a doctor if symptoms persist or worsen.",
+    "keywords": ["not feeling well", "sick", "unwell", "ill", "health"]
+  },
+  {
+    "question": "How to reduce fever?",
+    "answer": "Drink plenty of fluids and rest. Consult a doctor if fever exceeds 102°F.",
+    "keywords": ["fever", "temperature", "sick"]
+  },
+  {
+    "question": "What are basic hygiene tips?",
+    "answer": "Wash your hands regularly with soap and water.",
+    "keywords": ["hygiene", "clean", "health"]
+  },
+  {
+    "question": "How to improve immunity?",
+    "answer": "Maintain a balanced diet, exercise regularly, and sleep well.",
+    "keywords": ["immunity", "immune", "strength"]
+  }
+]

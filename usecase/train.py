@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 import json
-import os
-import random
 
 # -------------------------
 # Device
@@ -17,7 +15,7 @@ d_model = 128
 n_heads = 4
 n_layers = 2
 dropout = 0.1
-block_size = 32
+block_size = 64
 batch_size = 32
 learning_rate = 3e-4
 max_iters = 3000
