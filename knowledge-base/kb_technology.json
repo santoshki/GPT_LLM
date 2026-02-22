@@ -1,0 +1,12 @@
+[
+  {
+    "question": "What is Python?",
+    "answer": "Python is a high-level programming language.",
+    "keywords": ["python", "programming", "coding"]
+  },
+  {
+    "question": "What is MiniLLM?",
+    "answer": "MiniLLM is a lightweight custom transformer built using PyTorch.",
+    "keywords": ["minillm", "transformer", "pytorch"]
+  }
+]

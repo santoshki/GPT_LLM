@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import json
 import re
+import glob
+import difflib
 from huggingface_hub import hf_hub_download
 
 # -------------------------
@@ -25,6 +27,12 @@ with open(vocab_path, "r") as f:
 stoi = vocab_data["stoi"]
 itos = {int(k): v for k, v in vocab_data["itos"].items()}
 vocab_size = len(stoi)
+
+STOP_WORDS = {
+    "what", "where", "when", "how", "is", "are",
+    "do", "does", "did", "the", "a", "an",
+    "you", "your", "i", "me", "about"
+}
 
 # -------------------------
 # Hyperparameters (must match training)
@@ -136,18 +144,7 @@ def compute_math(expr):
 # -------------------------
 # Generate function (argmax, like working chat)
 # -------------------------
-def get_model_response(prompt, max_new_tokens=100):
-    """
-    Input: prompt (str)
-    Output: model response (str)
-    """
-    # Math fallback
-    if re.search(r"\d+\s*[\+\-\*\/]\s*\d+", prompt):
-        answer = compute_math(prompt)
-        if answer is not None:
-            return answer
-
-    # Otherwise model generation
+def generate(prompt, max_new_tokens=100):
     context = torch.tensor([stoi.get(c, 0) for c in prompt], dtype=torch.long).unsqueeze(0).to(device)
     generated_text = prompt
 
@@ -155,11 +152,128 @@ def get_model_response(prompt, max_new_tokens=100):
         context_cond = context[:, -block_size:]
         with torch.no_grad():
             logits = model(context_cond)
+
         next_token = torch.argmax(logits[:, -1, :], dim=-1, keepdim=True)
         context = torch.cat((context, next_token), dim=1)
         next_char = itos[int(next_token)]
         generated_text += next_char
-        if next_char == "\n":
+
+        if next_char == "\n" or next_char == ".":
             break
 
-    return generated_text[len(prompt):]  # return only the generated part
+    # Extract everything after the '=' sign if present
+    if '=' in generated_text:
+        return generated_text.split('=')[-1].strip()
+    return generated_text[len(prompt):]
+
+
+# -------------------------
+# Load Knowledge Base ONCE
+# -------------------------
+# def load_knowledge(path):
+#     with open(path, "r", encoding="utf-8") as f:
+#         lines = [line.strip() for line in f.readlines() if line.strip()]
+#
+#     # Group into question-answer pairs
+#     knowledge_pairs = []
+#     for i in range(0, len(lines), 2):
+#         if i + 1 < len(lines):
+#             question = lines[i]
+#             answer = lines[i + 1]
+#             knowledge_pairs.append((question, answer))
+#
+#     return knowledge_pairs
+
+def load_all_knowledge(folder_path):
+    knowledge_entries = []
+    files = glob.glob(folder_path + "/*.json")
+
+    for file in files:
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+            # Add category automatically from filename
+            category = file.split("\\")[-1].replace(".json", "")
+
+            for entry in data:
+                entry["category"] = category
+                knowledge_entries.append(entry)
+
+    return knowledge_entries
+
+
+knowledge_base = load_all_knowledge("C:\\Users\\santo\\PycharmProjects\\GPT\\knowledge-base")
+print(f"Loaded {len(knowledge_base)} total knowledge entries.")
+
+
+def normalize(text):
+    text = text.lower()
+    text = re.sub(r'[^a-z0-9\s]', '', text)
+    return text
+
+
+def retrieve(query):
+    query_norm = normalize(query)
+    query_words = {
+        w for w in query_norm.split()
+        if w not in STOP_WORDS
+    }
+
+    best_match = None
+    best_score = 0
+
+    for entry in knowledge_base:
+        question_norm = normalize(entry["question"])
+        question_words = {
+            w for w in question_norm.split()
+            if w not in STOP_WORDS
+        }
+
+        keyword_words = set(entry.get("keywords", []))
+
+        overlap_score = len(query_words & question_words)
+        keyword_score = len(query_words & keyword_words) * 2
+
+        total_score = overlap_score + keyword_score
+
+        if total_score > best_score:
+            best_score = total_score
+            best_match = entry
+
+    if best_score >= 1:
+        return best_match["answer"]
+
+    return None
+# -------------------------
+# Chat loop
+# -------------------------
+# print("\nMini LLM Ready! Type 'exit' to quit.\n")
+
+# while True:
+#     user_input = input("You: ")
+#
+#     if user_input.lower() == "exit":
+#         break
+
+def generate_model_response(user_input):
+    response = "I don't have information about that yet."
+
+    if re.search(r"\d+\s*[\+\-\*\/]\s*\d+", user_input):
+        response = compute_math(user_input)
+        if response is not None:
+            print("Model:", response)
+
+    else:
+        # Retrieve from knowledge base
+        response = retrieve(user_input)
+
+        if response:
+            print("Model:", response)
+
+        else:
+            prompt = user_input + "\n"
+            # response = generate(prompt, max_new_tokens=100)
+            # print("Model:", response)
+            response = generate(prompt)
+            print("Model: I don't have information about that yet.")
+    return response
