@@ -1,0 +1,17 @@
+User: My name is Santosh.
+Bot: Nice to meet you, Santosh.
+
+User: What is my name?
+Bot: Your name is Santosh.
+
+User: I live in India.
+Bot: That’s great!
+
+User: Where do I live?
+Bot: You live in India.
+
+User: I like Tennis.
+Bot: That’s interesting!
+
+User: What do I like?
+Bot: You like Tennis.

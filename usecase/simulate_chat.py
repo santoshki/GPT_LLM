@@ -35,7 +35,7 @@ d_model = 128
 n_heads = 4
 n_layers = 2
 dropout = 0.1
-block_size = 64
+block_size = 128
 
 # -------------------------
 # Model Definition
@@ -245,11 +245,14 @@ def retrieve(query):
 # -------------------------
 print("\nMini LLM Ready! Type 'exit' to quit.\n")
 
+conversation_history = []
+
 while True:
     user_input = input("You: ")
 
     if user_input.lower() == "exit":
         break
+
 
     # Math detection (with optional spaces)
     if re.search(r"\d+\s*[\+\-\*\/]\s*\d+", user_input):
@@ -259,15 +262,19 @@ while True:
             continue
 
     else:
-        # Retrieve from knowledge base
-        retrieved = retrieve(user_input)
 
-        if retrieved:
-            print("Model:", retrieved)
-            continue
-        else:
-            prompt = user_input + "\n"
-            # response = generate(prompt, max_new_tokens=100)
-            # print("Model:", response)
-            response = generate(prompt)
-            print("Model: I don't have information about that yet.")
+        conversation_history.append(f"User: {user_input}")
+        conversation_history.append("Bot:")
+
+        # Keep only last N turns (to fit block_size)
+        conversation_history = conversation_history[-8:]
+
+        context = "\n".join(conversation_history)
+
+        # Generate response using FULL context
+        response = generate(context, max_new_tokens=150)
+
+        print("Model:", response)
+
+        # Append generated response properly
+        conversation_history[-1] = f"Bot: {response}"
