@@ -43,6 +43,12 @@ n_layers = 2
 dropout = 0.1
 block_size = 32
 
+
+conversation_state = {
+    "last_category": None,
+    "last_answer": None
+}
+
 # -------------------------
 # Model definition
 # -------------------------
@@ -212,36 +218,64 @@ def normalize(text):
     return text
 
 
-def retrieve(query):
+ACK_WORDS = {"ok", "okay", "hmm", "fine", "alright", "will do", "sure", "thanks","thank you"}
+FOLLOWUP_TRIGGERS = {"what", "how", "why", "do", "should", "can"}
+
+def retrieve(query, conversation_history, min_score_threshold=4):
+
     query_norm = normalize(query)
     query_words = {
         w for w in query_norm.split()
         if w not in STOP_WORDS
     }
 
+    # 🔹 1️⃣ Handle acknowledgements separately
+    if query_norm in ACK_WORDS:
+        return "Take care. Let me know if you need anything else."
+
     best_match = None
     best_score = 0
 
     for entry in knowledge_base:
         question_norm = normalize(entry["question"])
+
         question_words = {
             w for w in question_norm.split()
             if w not in STOP_WORDS
         }
 
-        keyword_words = set(entry.get("keywords", []))
+        keyword_words = set(
+            normalize(" ".join(entry.get("keywords", []))).split()
+        )
 
         overlap_score = len(query_words & question_words)
-        keyword_score = len(query_words & keyword_words) * 2
+        keyword_score = len(query_words & keyword_words) * 3
 
-        total_score = overlap_score + keyword_score
+        fuzzy_ratio = difflib.SequenceMatcher(
+            None, query_norm, question_norm
+        ).ratio()
+        fuzzy_score = int(fuzzy_ratio * 4)
+
+        total_score = overlap_score + keyword_score + fuzzy_score
 
         if total_score > best_score:
             best_score = total_score
             best_match = entry
 
-    if best_score >= 1:
+    # 🔹 2️⃣ Strong match required
+    if best_score >= min_score_threshold:
+        conversation_state["last_category"] = best_match["category"]
         return best_match["answer"]
+
+    # 🔹 3️⃣ Contextual follow-up ONLY if question-like
+    if (
+        conversation_state["last_category"]
+        and any(word in FOLLOWUP_TRIGGERS for word in query_words)
+        and len(query_words) <= 5
+    ):
+        for entry in knowledge_base:
+            if entry["category"] == conversation_state["last_category"]:
+                return entry["answer"]
 
     return None
 # -------------------------
@@ -255,25 +289,25 @@ def retrieve(query):
 #     if user_input.lower() == "exit":
 #         break
 
-def generate_model_response(user_input):
-    response = "I don't have information about that yet."
+def generate_model_response(user_input, conversation_history):
 
+    # Math first
     if re.search(r"\d+\s*[\+\-\*\/]\s*\d+", user_input):
-        response = compute_math(user_input)
-        if response is not None:
-            print("Model:", response)
+        math_result = compute_math(user_input)
+        if math_result:
+            return math_result
 
-    else:
-        # Retrieve from knowledge base
-        response = retrieve(user_input)
+    # Strong contextual retrieve
+    kb_response = retrieve(user_input, conversation_history)
 
-        if response:
-            print("Model:", response)
+    if kb_response:
+        return kb_response
 
-        else:
-            prompt = user_input + "\n"
-            # response = generate(prompt, max_new_tokens=100)
-            # print("Model:", response)
-            response = generate(prompt)
-            print("Model: I don't have information about that yet.")
-    return response
+    # Fallback to model
+    prompt = user_input + "\n"
+    model_response = generate(prompt)
+
+    if not model_response or not model_response.strip():
+        return "Could you please clarify your question?"
+
+    return model_response.strip()

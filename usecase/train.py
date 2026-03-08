@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import json
+import os
 
 # -------------------------
 # Device
@@ -9,60 +10,40 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
 # -------------------------
-# Hyperparameters
+# Hyperparameters (UPGRADED)
 # -------------------------
-d_model = 128
+d_model = 128          # Increased model size
 n_heads = 4
-n_layers = 2
+n_layers = 2           # Deeper network
 dropout = 0.1
-block_size = 64
+block_size = 128       # Larger context window for conversation
 batch_size = 32
 learning_rate = 3e-4
-max_iters = 3000
-eval_interval = 300
+max_iters = 5000      # Train longer
+eval_interval = 500
 
 # -------------------------
-# Generate math dataset if missing
-# -------------------------
-# if not os.path.exists("../data.txt"):
-#     print("Generating math dataset...")
-#     ops = ['+', '-', '*', '/']
-#     examples = []
-#
-#     for _ in range(5000):
-#         a = random.randint(1, 100)
-#         b = random.randint(1, 100)
-#         op = random.choice(ops)
-#
-#         if op == '/':
-#             a = a * b  # make division exact
-#
-#         question = f"Q: {a} {op} {b}\nA: "
-#         answer = str(eval(f"{a}{op}{b}"))
-#         examples.append(question + answer)
-#
-#     with open("../training-data/arithmetic.txt", "w", encoding="utf-8") as f:
-#         for line in examples:
-#             f.write(line + "\n\n")
-#     print("Math dataset generated with 5000 examples.")
-
-# -------------------------
-# Load Text Data
+# Load Text Data (ADD conversation.txt)
 # -------------------------
 training_data_filepath = "C:\\Users\\santo\\PycharmProjects\\GPT\\training-data"
-files = [training_data_filepath + "\\arithmetic.txt", training_data_filepath + "\\general.txt"]
+
+files = [
+    training_data_filepath + "\\arithmetic.txt",
+    training_data_filepath + "\\conversation_memory.txt"
+]
 
 text = ""
 for file in files:
-    with open(file, "r", encoding="utf-8") as f:
-        text += f.read() + "\n\n"
-# with open("../training-data/arithmetic.txt", "r", encoding="utf-8") as f:
-#     text = f.read()
+    if os.path.exists(file):
+        with open(file, "r", encoding="utf-8") as f:
+            text += f.read() + "\n\n"
+    else:
+        print(f"Warning: {file} not found.")
 
 print("Dataset length:", len(text))
 
 # -------------------------
-# Build Vocabulary
+# Build Vocabulary (Character-level)
 # -------------------------
 chars = sorted(list(set(text)))
 vocab_size = len(chars)
@@ -74,7 +55,6 @@ itos = {i: ch for i, ch in enumerate(chars)}
 # Save vocab
 with open("../vocab.json", "w", encoding="utf-8") as f:
     json.dump({"stoi": stoi, "itos": itos}, f)
-print("Vocabulary saved to vocab.json")
 
 data = torch.tensor([stoi[c] for c in text], dtype=torch.long)
 
@@ -88,12 +68,11 @@ val_data = data[split:]
 # -------------------------
 def get_batch(split_name):
     dataset = train_data if split_name == "train" else val_data
-    if len(dataset) <= block_size:
-        raise ValueError(f"Dataset too small: {len(dataset)} <= block_size {block_size}")
 
     ix = torch.randint(len(dataset) - block_size, (batch_size,))
     x = torch.stack([dataset[i:i + block_size] for i in ix])
     y = torch.stack([dataset[i + 1:i + block_size + 1] for i in ix])
+
     return x.to(device), y.to(device)
 
 # -------------------------
@@ -109,24 +88,33 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, x):
         B, T, C = x.shape
+
         qkv = self.qkv(x).reshape(B, T, 3, n_heads, self.head_dim)
         q, k, v = qkv[:, :, 0], qkv[:, :, 1], qkv[:, :, 2]
-        q, k, v = q.permute(0,2,1,3), k.permute(0,2,1,3), v.permute(0,2,1,3)
-        scores = (q @ k.transpose(-2,-1)) / (self.head_dim**0.5)
+
+        q = q.permute(0, 2, 1, 3)
+        k = k.permute(0, 2, 1, 3)
+        v = v.permute(0, 2, 1, 3)
+
+        scores = (q @ k.transpose(-2, -1)) / (self.head_dim ** 0.5)
+
         mask = torch.tril(torch.ones(T, T, device=device))
         scores = scores.masked_fill(mask == 0, float('-inf'))
+
         attn = torch.softmax(scores, dim=-1)
         attn = self.dropout(attn)
-        out = (attn @ v).permute(0,2,1,3).contiguous().reshape(B, T, C)
+
+        out = (attn @ v).permute(0, 2, 1, 3).contiguous().reshape(B, T, C)
+
         return self.fc_out(out)
 
 class FeedForward(nn.Module):
     def __init__(self):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(d_model, 4*d_model),
+            nn.Linear(d_model, 4 * d_model),
             nn.GELU(),
-            nn.Linear(4*d_model, d_model),
+            nn.Linear(4 * d_model, d_model),
             nn.Dropout(dropout)
         )
 
@@ -157,16 +145,22 @@ class SimpleGPT(nn.Module):
 
     def forward(self, idx):
         B, T = idx.shape
-        x = self.token_emb(idx) + self.pos_emb(torch.arange(T, device=idx.device))
+
+        pos = torch.arange(T, device=idx.device).unsqueeze(0)
+        x = self.token_emb(idx) + self.pos_emb(pos)
+
         x = self.blocks(x)
         x = self.ln_f(x)
-        return self.head(x)
+        logits = self.head(x)
+
+        return logits
 
 # -------------------------
 # Initialize Model
 # -------------------------
 model = SimpleGPT().to(device)
 print("Model parameters:", sum(p.numel() for p in model.parameters()))
+
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 loss_fn = nn.CrossEntropyLoss()
 
@@ -175,14 +169,18 @@ loss_fn = nn.CrossEntropyLoss()
 # -------------------------
 for step in range(max_iters):
     model.train()
+
     x, y = get_batch("train")
     logits = model(x)
+
     B, T, C = logits.shape
-    loss = loss_fn(logits.view(B*T, C), y.view(B*T))
+    loss = loss_fn(logits.view(B * T, C), y.view(B * T))
+
     optimizer.zero_grad()
     loss.backward()
     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
     optimizer.step()
+
     if step % eval_interval == 0:
         print(f"Step {step} | Loss: {loss.item():.4f}")
 

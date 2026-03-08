@@ -2,21 +2,67 @@
   {
     "question": "I am not feeling well",
     "answer": "If you are not feeling well, rest, stay hydrated, and monitor your symptoms. Consult a doctor if symptoms persist or worsen.",
-    "keywords": ["not feeling well", "sick", "unwell", "ill", "health"]
+    "keywords": [
+      "not feeling well",
+      "sick",
+      "unwell",
+      "ill",
+      "health"
+    ]
   },
   {
     "question": "How to reduce fever?",
     "answer": "Drink plenty of fluids and rest. Consult a doctor if fever exceeds 102°F.",
-    "keywords": ["fever", "temperature", "sick"]
+    "keywords": [
+      "fever",
+      "temperature",
+      "sick"
+    ]
   },
   {
     "question": "What are basic hygiene tips?",
     "answer": "Wash your hands regularly with soap and water.",
-    "keywords": ["hygiene", "clean", "health"]
+    "keywords": [
+      "hygiene",
+      "clean",
+      "health"
+    ]
   },
   {
     "question": "How to improve immunity?",
     "answer": "Maintain a balanced diet, exercise regularly, and sleep well.",
-    "keywords": ["immunity", "immune", "strength"]
+    "keywords": [
+      "immunity",
+      "immune",
+      "strength"
+    ]
+  },
+  {
+    "question": "What is skin care?",
+    "answer": "Basic skin care and healthy lifestyle choices can help prevent early aging and other skin issues. Follow these tips for gentle skin care: A balanced diet can help you look and feel your best. But some research links acne with drinking lots of milk or eating lots of processed foods that raise blood sugar quickly.",
+    "keywords": [
+      "skin",
+      "healthy",
+      "other",
+      "care",
+      "help",
+      "some",
+      "acne",
+      "lots"
+    ]
+  },
+  {
+    "question": "What are important tips for skin care: 5 tips for healthy skin?",
+    "answer": "Too much stress can make skin more sensitive and trigger acne breakouts and other skin conditions. To boost your chances for healthy skin and a healthy state of mind, take some steps to manage your stress: The results for your skin might be more dramatic than you expect. To provide you with the most relevant and helpful information, we may combine your email and website data with other information we have about you.",
+    "keywords": [
+      "skin",
+      "healthy",
+      "other",
+      "care",
+      "help",
+      "some",
+      "acne",
+      "lots"
+    ]
   }
 ]
