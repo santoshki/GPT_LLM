@@ -28,7 +28,7 @@ eval_interval = 500
 training_data_filepath = "C:\\Users\\santo\\PycharmProjects\\GPT\\training-data"
 
 files = [
-    training_data_filepath + "\\arithmetic.txt",
+    # training_data_filepath + "\\arithmetic.txt",
     training_data_filepath + "\\conversation_memory.txt"
 ]
 
@@ -53,7 +53,7 @@ stoi = {ch: i for i, ch in enumerate(chars)}
 itos = {i: ch for i, ch in enumerate(chars)}
 
 # Save vocab
-with open("../vocab.json", "w", encoding="utf-8") as f:
+with open("../vocab2.json", "w", encoding="utf-8") as f:
     json.dump({"stoi": stoi, "itos": itos}, f)
 
 data = torch.tensor([stoi[c] for c in text], dtype=torch.long)
@@ -187,5 +187,5 @@ for step in range(max_iters):
 # -------------------------
 # Save Model
 # -------------------------
-torch.save(model.state_dict(), "../mini_llm.pt")
+torch.save(model.state_dict(), "../mini_llm_v2.pt")
 print("\nTraining complete. Model saved as mini_llm.pt")
