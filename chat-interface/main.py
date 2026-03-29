@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
-from entities import invoke_llm
+from entities import invoke_llm, invoke_api
 
 app = FastAPI()
 
@@ -42,7 +42,8 @@ async def websocket_chat(websocket: WebSocket):
             context = "\n".join(conversation_history)
 
             try:
-                bot_response = invoke_llm.generate_model_response(user_message, conversation_history)
+                #bot_response = invoke_llm.generate_model_response(user_message, conversation_history)
+                bot_response = invoke_api.generate_response(user_message)
             except Exception as e:
                 print("Model error:", e)
                 bot_response = None

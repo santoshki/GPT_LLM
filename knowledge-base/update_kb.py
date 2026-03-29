@@ -239,5 +239,5 @@ def update_knowledge_from_url(url):
 # ---------------------------------
 
 if __name__ == "__main__":
-    url = "https://www.mayoclinic.org/healthy-lifestyle/adult-health/in-depth/skin-care/art-20048237"
+    url = "https://www.coreenergetics.org/methods-for-managing-stress-over-the-season-of-holidays/?gad_source=1&gad_campaignid=22300250112&gbraid=0AAAAApJEfmbvMfDX3lD2fffFQCCyiPm6F&gclid=Cj0KCQiA2bTNBhDjARIsAK89wlGFzMrjlOgJV-BMWahKFLtZuDxhjn-DfOgU-fFOuHSYEk7WXKQyCwUaAkKAEALw_wcB"
     update_knowledge_from_url(url)
