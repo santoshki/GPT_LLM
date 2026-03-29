@@ -1,13 +1,24 @@
 from groq import Groq
+import os
+from dotenv import load_dotenv
 import json
 import re
 import glob
 import difflib
 
 # -------------------------
-# Groq Client (USE ENV VARIABLE)
+# Load Environment Variables
 # -------------------------
-client = Groq(api_key="")
+load_dotenv()
+
+api_key = os.getenv("GROQ_API_KEY")
+if not api_key:
+    raise ValueError("❌ GROQ_API_KEY is not set in environment variables")
+
+# -------------------------
+# Groq Client
+# -------------------------
+client = Groq(api_key=api_key)
 
 chat_history = []
 
@@ -16,12 +27,12 @@ chat_history = []
 # -------------------------
 def load_all_knowledge(folder_path):
     knowledge_entries = []
-    files = glob.glob(folder_path + "/*.json")
+    files = glob.glob(os.path.join(folder_path, "*.json"))
 
     for file in files:
         with open(file, "r", encoding="utf-8") as f:
             data = json.load(f)
-            category = file.split("\\")[-1].replace(".json", "")
+            category = os.path.basename(file).replace(".json", "")
 
             for entry in data:
                 entry["category"] = category
@@ -30,16 +41,21 @@ def load_all_knowledge(folder_path):
     return knowledge_entries
 
 
-knowledge_base = load_all_knowledge("C:\\Users\\santo\\PycharmProjects\\GPT\\knowledge-base")
-print(f"Loaded {len(knowledge_base)} KB entries.")
+# 👉 CHANGE THIS PATH FOR RENDER (use relative path)
+KB_PATH = os.getenv("KB_PATH", "./../knowledge-base")
+
+knowledge_base = load_all_knowledge(KB_PATH)
+print(f"✅ Loaded {len(knowledge_base)} KB entries.")
 
 # -------------------------
 # Helpers
 # -------------------------
-STOP_WORDS = {"what","where","when","how","is","are","do","does","did","the","a","an","you","your","i","me","about"}
+STOP_WORDS = {
+    "what","where","when","how","is","are","do","does","did",
+    "the","a","an","you","your","i","me","about"
+}
 
-ACK_WORDS = {"ok", "okay", "hmm", "fine", "alright", "will do", "sure", "thanks","thank you"}
-FOLLOWUP_TRIGGERS = {"what", "how", "why", "do", "should", "can"}
+ACK_WORDS = {"ok", "okay", "hmm", "fine", "alright", "will do", "sure", "thanks", "thank you"}
 
 conversation_state = {"last_category": None}
 
@@ -79,7 +95,7 @@ def retrieve(query, min_score_threshold=4):
             best_score = total_score
             best_match = entry
 
-    if best_score >= min_score_threshold:
+    if best_match and best_score >= min_score_threshold:
         conversation_state["last_category"] = best_match["category"]
         return best_match["answer"]
 
@@ -92,42 +108,47 @@ def retrieve(query, min_score_threshold=4):
 def rephrase_with_groq(user_input, kb_answer):
     global chat_history
 
-    messages = [
-        {
-            "role": "system",
-            "content": """
+    try:
+        messages = [
+            {
+                "role": "system",
+                "content": """
 You are a helpful assistant.
 
-Your job is to rephrase the given answer in a natural, conversational way.
+Rephrase the given answer in a natural, conversational way.
 
 Rules:
-- Do NOT change the meaning
+- Do NOT change meaning
 - Do NOT add new information
 - Keep it clear and user-friendly
 """
-        },
-        {
-            "role": "user",
-            "content": f"""
+            },
+            {
+                "role": "user",
+                "content": f"""
 User Question: {user_input}
 
 Knowledge Base Answer: {kb_answer}
 
 Rephrase the answer:
 """
-        }
-    ]
+            }
+        ]
 
-    completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages,
-        temperature=0.5,
-        max_completion_tokens=300
-    )
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            temperature=0.5,
+            max_completion_tokens=300
+        )
 
-    response = completion.choices[0].message.content
+        response = completion.choices[0].message.content.strip()
 
-    # Save to history
+    except Exception as e:
+        print(f"❌ Groq Rephrase Error: {e}")
+        return kb_answer  # ✅ fallback
+
+    # Save history
     chat_history.append({"role": "user", "content": user_input})
     chat_history.append({"role": "assistant", "content": response})
     chat_history = chat_history[-10:]
@@ -141,33 +162,34 @@ Rephrase the answer:
 def groq_fallback(user_input):
     global chat_history
 
-    messages = [
-        {
-            "role": "system",
-            "content": """
+    try:
+        messages = [
+            {
+                "role": "system",
+                "content": """
 You are a helpful assistant.
 
 Rules:
-- Do NOT assume user preferences
-- Use conversation history if available
-- If unsure, say you don’t have enough information
+- Use conversation history if helpful
+- If unsure, say you don’t know
 """
-        }
-    ] + chat_history + [
-        {
-            "role": "user",
-            "content": user_input
-        }
-    ]
+            }
+        ] + chat_history + [
+            {"role": "user", "content": user_input}
+        ]
 
-    completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages,
-        temperature=0.7,
-        max_completion_tokens=1024
-    )
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            temperature=0.7,
+            max_completion_tokens=1024
+        )
 
-    response = completion.choices[0].message.content
+        response = completion.choices[0].message.content.strip()
+
+    except Exception as e:
+        print(f"❌ Groq Fallback Error: {e}")
+        return "I'm having trouble connecting right now. Please try again."
 
     # Save history
     chat_history.append({"role": "user", "content": user_input})
@@ -183,16 +205,14 @@ Rules:
 def generate_response(user_input):
     try:
         kb_response = retrieve(user_input)
-        print("✅ Answer found in Knowledge Base!")
-        print("Answer:", kb_response)
+
         if kb_response:
-            print("🤖 Bot response:")
-            bot_response = rephrase_with_groq(user_input, kb_response)
-            return bot_response
-        print("🤖 Nothing found in Knowledge Base, checking foundational model for an appropriate response.....")
-        bot_response = groq_fallback(user_input)
-        return bot_response
+            print("✅ Answer found in Knowledge Base!")
+            return rephrase_with_groq(user_input, kb_response)
+
+        print("🤖 No KB match. Using LLM fallback...")
+        return groq_fallback(user_input)
 
     except Exception as e:
-        print(f"Error: {e}")
-        return "Something went wrong."
+        print(f"❌ Critical Error: {e}")
+        return "Something went wrong. Please try again."
