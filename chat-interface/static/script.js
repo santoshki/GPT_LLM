@@ -1,14 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    const socket = new WebSocket("ws://127.0.0.1:8000/ws/chat");
-
     const chatArea = document.getElementById("chat-area");
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
+    const stopBtn = document.getElementById("stopBtn");
     const welcomeText = document.getElementById("welcomeText");
 
     let currentBotMessage = null;
-    let firstMessageSent = false;
+    let typingTimeout = null;
+    let controller = null;
+    let isStopped = false;
 
     function addMessage(content, className) {
         const msg = document.createElement("div");
@@ -19,39 +20,106 @@ document.addEventListener("DOMContentLoaded", function () {
         return msg;
     }
 
-    function sendMessage() {
-    const message = input.value.trim();
-    if (!message) return;
-
-    const welcome = document.getElementById("welcomeText");
-
-    // Hide heading on first message
-    if (welcome && welcome.style.display !== "none") {
-        welcome.style.opacity = "0";
-
-        setTimeout(() => {
-            welcome.style.display = "none";
-        }, 300);
+    function showStop() {
+        sendBtn.style.display = "none";
+        stopBtn.style.display = "inline-block";
     }
 
-    addMessage(message, "user");
+    function showSend() {
+        sendBtn.style.display = "inline-block";
+        stopBtn.style.display = "none";
+    }
 
-    socket.send(message);
-    input.value = "";
+    function stopAll() {
+        isStopped = true;
 
-    currentBotMessage = addMessage("", "bot");
-}
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+            typingTimeout = null;
+        }
+
+        if (controller) {
+            controller.abort();
+            controller = null;
+        }
+
+        showSend();
+    }
+
+    function typeMessage(element, text) {
+        let index = 0;
+        element.textContent = "";
+
+        function type() {
+            if (isStopped) return;
+
+            if (index < text.length) {
+                element.textContent += text.charAt(index);
+                index++;
+                chatArea.scrollTop = chatArea.scrollHeight;
+
+                typingTimeout = setTimeout(type, 10);
+            } else {
+                showSend();
+            }
+        }
+
+        type();
+    }
+
+    async function sendMessage() {
+        const message = input.value.trim();
+        if (!message) return;
+
+        isStopped = false;
+        showStop();
+
+        if (welcomeText && welcomeText.style.display !== "none") {
+            welcomeText.style.opacity = "0";
+            setTimeout(() => {
+                welcomeText.style.display = "none";
+            }, 300);
+        }
+
+        addMessage(message, "user");
+        input.value = "";
+
+        currentBotMessage = addMessage("Thinking...", "bot");
+
+        try {
+            controller = new AbortController();
+
+            const response = await fetch("http://127.0.0.1:8000/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message }),
+                signal: controller.signal
+            });
+
+            const data = await response.json();
+
+            if (!isStopped && currentBotMessage) {
+                typeMessage(currentBotMessage, data.response);
+            }
+
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                console.error(error);
+                if (currentBotMessage) {
+                    currentBotMessage.textContent = "Error getting response.";
+                }
+            }
+            showSend();
+        }
+    }
 
     sendBtn.onclick = sendMessage;
+    stopBtn.onclick = stopAll;
 
     input.addEventListener("keydown", function (e) {
         if (e.key === "Enter") sendMessage();
     });
-
-    socket.onmessage = function (event) {
-        if (currentBotMessage) {
-            currentBotMessage.textContent = event.data;
-        }
-    };
 
 });
