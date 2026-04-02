@@ -261,6 +261,7 @@ body {
     align-items: center;
     font-size: 14px;
     gap: 8px;
+    margin-right: 80px;
 }
 
 .status-dot {
@@ -269,6 +270,7 @@ body {
     background: #22c55e;
     border-radius: 50%;
     box-shadow: 0 0 8px #22c55e;
+    align-items: center;
 }
 
 /* Adjust chat padding so it doesn't overlap */
@@ -289,7 +291,7 @@ body {
 }
 
 .chat-area {
-    width: 70%;
+    width: 90%;
     max-width: 1000px;
     background: #ffffff;
     border-radius: 20px;
@@ -335,4 +337,13 @@ body {
 
 #stopBtn:hover {
     background: #d9363e;
+}
+.copyright {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.6);
+    font-weight: 500;
+    pointer-events: none; /* 👈 so it doesn't block clicks */
 }
