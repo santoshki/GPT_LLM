@@ -23,3 +23,4 @@ huggingface-hub==0.23.0
 
 # ✅ FIXED (required for Groq)
 pydantic>=2.0
+gunicorn==21.2.0
