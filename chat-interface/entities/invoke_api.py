@@ -182,14 +182,14 @@ Rules:
             model="llama-3.3-70b-versatile",
             messages=messages,
             temperature=0.7,
-            max_completion_tokens=1024
+            max_tokens=500
         )
 
         response = completion.choices[0].message.content.strip()
 
     except Exception as e:
         print(f"❌ Groq Fallback Error: {e}")
-        return "I'm having trouble connecting right now. Please try again."
+        return "Sorry, I hit a temporary issue. Please try again in a moment."
 
     # Save history
     chat_history.append({"role": "user", "content": user_input})
