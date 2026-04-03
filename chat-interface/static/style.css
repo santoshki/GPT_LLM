@@ -203,10 +203,9 @@ body {
     left: 55%;
     transform: translateX(-50%) scale(1);
 
-    width: 70%;
-    max-width: 1300px;
+    width: 1200px;
 
-    padding: 12px 18px;
+    padding: 12px 12px;
     border-radius: 50px;
 
     display: flex;
