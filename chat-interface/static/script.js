@@ -96,11 +96,12 @@ document.addEventListener("DOMContentLoaded", function () {
         isStopped = false;
         showStop();
 
-        // Hide welcome text
-        if (welcomeText && welcomeText.style.display !== "none") {
-            welcomeText.style.opacity = "0";
+        // Hide welcome text smoothly
+        const welcome = document.getElementById("welcomeText");
+        if (welcome && welcome.style.display !== "none") {
+            welcome.style.opacity = "0";
             setTimeout(() => {
-                welcomeText.style.display = "none";
+                welcome.style.display = "none";
             }, 300);
         }
 
@@ -139,20 +140,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =========================
-    // NEW CHAT (🔥 added)
+    // NEW CHAT (🔥 FIXED)
     // =========================
     function startNewChat() {
-        chatArea.innerHTML = "";
 
-        const welcome = document.createElement("div");
-        welcome.className = "welcome-text";
-        welcome.id = "welcomeText";
-        welcome.textContent = "Hi, Good day. How may I help you?";
+        // ✅ Stop any running processes
+        stopAll();
+        isStopped = false;
+        currentBotMessage = null;
 
-        chatArea.appendChild(welcome);
+        // ✅ Smooth reset animation
+        chatArea.style.transition = "all 0.2s ease";
+        chatArea.style.opacity = "0";
+        chatArea.style.transform = "translateY(10px)";
 
-        input.value = "";
-        input.focus();
+        setTimeout(() => {
+
+            // Clear chat
+            chatArea.innerHTML = "";
+
+            // Restore welcome message
+            const welcome = document.createElement("div");
+            welcome.className = "welcome-text";
+            welcome.id = "welcomeText";
+            welcome.textContent = "Hi, Good day. How may I help you?";
+
+            chatArea.appendChild(welcome);
+
+            // Reset input
+            input.value = "";
+            input.focus();
+
+            // Reset buttons
+            showSend();
+
+            // Fade back in
+            chatArea.style.opacity = "1";
+            chatArea.style.transform = "translateY(0px)";
+
+        }, 200);
     }
 
     // =========================
