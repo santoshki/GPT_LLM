@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    const chatArea = document.getElementById("chatStream"); // ✅ updated
+    const chatArea = document.getElementById("chatStream");
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
     const stopBtn = document.getElementById("stopBtn");
     const welcomeText = document.getElementById("welcomeText");
-    const main = document.querySelector(".main");
+    const newChatBtn = document.querySelector(".new-chat");
 
     let currentBotMessage = null;
     let typingTimeout = null;
@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         chatArea.appendChild(msg);
 
-        // Smooth scroll
         chatArea.scrollTo({
             top: chatArea.scrollHeight,
             behavior: "smooth"
@@ -36,11 +35,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // =========================
     function showStop() {
         sendBtn.style.display = "none";
-        if (stopBtn) stopBtn.style.display = "inline-block";
+        if (stopBtn) stopBtn.style.display = "inline-flex";
     }
 
     function showSend() {
-        sendBtn.style.display = "inline-block";
+        sendBtn.style.display = "inline-flex";
         if (stopBtn) stopBtn.style.display = "none";
     }
 
@@ -78,7 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 index++;
 
                 chatArea.scrollTop = chatArea.scrollHeight;
-
                 typingTimeout = setTimeout(type, 12);
             } else {
                 showSend();
@@ -99,8 +97,6 @@ document.addEventListener("DOMContentLoaded", function () {
         showStop();
 
         // Hide welcome text
-        if (main) main.classList.add("chat-started");
-
         if (welcomeText && welcomeText.style.display !== "none") {
             welcomeText.style.opacity = "0";
             setTimeout(() => {
@@ -108,11 +104,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 300);
         }
 
-        // Add user message
         addMessage(message, "user");
         input.value = "";
 
-        // Add bot placeholder
         currentBotMessage = addMessage("Thinking...", "bot");
 
         try {
@@ -123,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ message: message }),
+                body: JSON.stringify({ message }),
                 signal: controller.signal
             });
 
@@ -145,13 +139,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =========================
+    // NEW CHAT (🔥 added)
+    // =========================
+    function startNewChat() {
+        chatArea.innerHTML = "";
+
+        const welcome = document.createElement("div");
+        welcome.className = "welcome-text";
+        welcome.id = "welcomeText";
+        welcome.textContent = "Hi, Good day. How may I help you?";
+
+        chatArea.appendChild(welcome);
+
+        input.value = "";
+        input.focus();
+    }
+
+    // =========================
     // Events
     // =========================
     sendBtn.addEventListener("click", sendMessage);
 
     if (stopBtn) {
         stopBtn.addEventListener("click", stopAll);
-        stopBtn.style.display = "none"; // hide initially
+        stopBtn.style.display = "none";
+    }
+
+    if (newChatBtn) {
+        newChatBtn.addEventListener("click", startNewChat);
     }
 
     input.addEventListener("keydown", function (e) {
@@ -160,5 +175,8 @@ document.addEventListener("DOMContentLoaded", function () {
             sendMessage();
         }
     });
+
+    // Auto focus
+    input.focus();
 
 });

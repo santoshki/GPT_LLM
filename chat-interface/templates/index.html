@@ -11,17 +11,27 @@
 
     <!-- Top Bar -->
     <div class="top-bar">
-        <div class="logo">BlueTech AI</div>
-
-        <div class="top-status">
-            <div class="status-dot"></div>
-            <span>Online</span>
-        </div>
+        <div class="logo">Fiona</div>
     </div>
 
     <!-- Sidebar -->
     <div class="sidebar">
+
+        <!-- Logo -->
+        <div class="sidebar-logo">
+            <div class="bot-icon">🤖</div>
+            <div class="bot-name">BlueTech AI</div>
+        </div>
+
+        <!-- Status -->
+        <div class="sidebar-status">
+            <div class="status-dot"></div>
+            <span>Online</span>
+        </div>
+
+        <!-- New Chat Button -->
         <button class="new-chat">New Chat</button>
+
     </div>
 
     <!-- Main Chat -->
@@ -29,7 +39,6 @@
 
         <div class="chat-stream" id="chatStream">
 
-            <!-- ✅ FIXED ID -->
             <div class="welcome-text" id="welcomeText">
                 Hi, Good day. How may I help you?
             </div>
@@ -46,10 +55,7 @@
             placeholder="Send a message..."
         />
 
-        <!-- ✅ FIXED: Added ID -->
         <button id="sendBtn">➤</button>
-
-        <!-- ✅ OPTIONAL STOP BUTTON -->
         <button id="stopBtn" style="display:none;">■</button>
     </div>
 

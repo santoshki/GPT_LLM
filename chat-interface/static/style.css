@@ -36,91 +36,288 @@ body {
 }
 
 /* ========================= */
-/* Top Bar */
+/* 3D GLASS TOP BAR */
 /* ========================= */
 
 .top-bar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
+    top: 20px;
+    left: 55%;
+    transform: translateX(-50%);
+
+    width: 70px;
+    height: 50px;
 
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    margin-top:-15px;
 
-    padding: 0 20px;
+    padding: 0 25px;
+    border-radius: 40px;
 
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
+    /* 🔥 Glass base */
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.55),
+        rgba(255,255,255,0.15)
+    );
 
-    /* 🔥 Soft Neumorphism */
+    backdrop-filter: blur(25px) saturate(160%);
+
+    /* 🔥 3D depth shadows */
     box-shadow:
-        6px 6px 12px var(--shadow-dark),
-        -6px -6px 12px var(--shadow-light);
+        0 20px 40px rgba(0,0,0,0.12),   /* drop shadow */
+        inset 0 2px 6px rgba(255,255,255,0.6), /* top highlight */
+        inset 0 -4px 10px rgba(0,0,0,0.05);   /* bottom depth */
+
+    border: 1px solid rgba(255,255,255,0.4);
 
     z-index: 100;
 }
 
-/* Logo */
-.logo {
-    font-weight: bold;
-    color: var(--primary);
-    font-size: 22px;
-    margin-left: 700px;
+/* ✨ glossy reflection layer */
+.top-bar::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 10%;
+    width: 80%;
+    height: 40%;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.7),
+        transparent
+    );
+
+    border-radius: 40px;
+    opacity: 0.6;
+    pointer-events: none;
 }
 
-/* Status */
+/* ✨ floating glow */
+.top-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    border-radius: 40px;
+
+    box-shadow:
+        0 0 30px rgba(122,162,255,0.25),
+        0 0 60px rgba(91,91,214,0.15);
+
+    opacity: 0.6;
+    z-index: -1;
+}
+
+/* ========================= */
+/* LOGO (3D TEXT STYLE) */
+/* ========================= */
+
+.logo {
+    font-weight: 700;
+    font-size: 25px;
+    margin-left: 5px;
+    margin-top: 0px;
+    width: 100px;
+
+    /* 🔥 Darker blue gradient */
+    background: linear-gradient(145deg, #2f3bbd, #4c6fff);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    /* 🔥 stronger 3D depth */
+    text-shadow:
+        1px 1px 0 rgba(255,255,255,0.4),
+        3px 3px 6px rgba(0,0,0,0.25);
+}
+
+/* ========================= */
+/* STATUS */
+/* ========================= */
+
 .top-status {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-right: 40px;
-    font-size: 15px;
+    margin-left: 60px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-top: 20px;
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        inset 2px 2px 6px rgba(0,0,0,0.05),
+        inset -2px -2px 6px rgba(255,255,255,0.7);
+
+    font-size: 14px;
 }
 
+/* 🔥 glowing status dot */
 .status-dot {
     width: 10px;
     height: 10px;
-    background: #22c55e;
     border-radius: 50%;
+    background: #22c55e;
+
+    box-shadow:
+        0 0 8px #22c55e,
+        0 0 16px rgba(34,197,94,0.6);
 }
 
 /* ========================= */
-/* Sidebar */
+/* Sidebar (Blue Theme) */
 /* ========================= */
 
 .sidebar {
-    width: 150px;
-    padding: 70px 15px 15px;
-    margin-top: 60px;
+    width: 180px;
+
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
 
-    background: rgba(255,255,255,0.3);
+    padding: 20px 15px;
+
+    background: linear-gradient(
+        160deg,
+        rgba(91,91,214,0.9),
+        rgba(122,162,255,0.75)
+    );
+
     backdrop-filter: blur(20px);
 
     box-shadow:
-        6px 0 12px var(--shadow-dark),
-        -2px 0 8px var(--shadow-light);
+        8px 0 20px rgba(0,0,0,0.15),
+        inset 2px 2px 6px rgba(255,255,255,0.2),
+        inset -2px -2px 6px rgba(0,0,0,0.1);
+
+    border-right: 1px solid rgba(255,255,255,0.2);
 }
 
-/* Button */
-.new-chat {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
+/* ========================= */
+/* Chatbot Logo */
+/* ========================= */
 
-    font-size: 15px;
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-    background: rgba(255,255,255,0.6);
+    margin-bottom: 30px;
+    margin-left: 10px;
+}
+/* ========================= */
+/* Sidebar Bottom Status */
+/* ========================= */
+
+.sidebar-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-left: 10px;
+    margin-top: -10px;   /* 🔥 pulls it closer to logo */
+    margin-bottom: 20px; /* 🔥 space before button */
+
+    padding: 6px 12px;
+    border-radius: 20px;
+
+    font-size: 13px;
+    color: white;
+
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
 
     box-shadow:
-        4px 4px 16px var(--shadow-dark),
-        -2px -2px 16px var(--shadow-light);
+        inset 2px 2px 6px rgba(0,0,0,0.1),
+        inset -2px -2px 6px rgba(255,255,255,0.2);
+}
+/* 🤖 Icon bubble */
+.bot-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+
+    background: linear-gradient(145deg, #ffffff, #dbe4ff);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+
+    /* 🔥 neumorphic pop */
+    box-shadow:
+        4px 4px 10px rgba(0,0,0,0.2),
+        -2px -2px 6px rgba(255,255,255,0.8);
+}
+
+/* 🤖 text */
+.bot-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+/* ========================= */
+/* Compact Premium Button */
+/* ========================= */
+
+.new-chat {
+    display: inline-flex;        /* 🔥 prevents full width */
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 16px;          /* 👈 reduced */
+    width: 150px;          /* 🔥 shrink to content */
+
+    border-radius: 12px;
+    border: none;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 14px;
+    font-weight: 500;
+
+    color: var(--text);
+
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.9),
+        rgba(230,233,239,0.6)
+    );
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        6px 6px 6px rgba(0,0,0,0.08),
+        -1px -1px 6px rgba(255,255,255,0.9);
 
     cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Hover */
+.new-chat:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        8px 8px 18px rgba(0,0,0,0.12),
+        -6px -6px 14px rgba(255,255,255,1),
+        0 0 10px rgba(122,162,255,0.25);
+}
+
+/* Click */
+.new-chat:active {
+    transform: scale(0.97);
+
+    box-shadow:
+        inset 4px 4px 10px rgba(0,0,0,0.1),
+        inset -4px -4px 10px rgba(255,255,255,0.8);
 }
 
 /* ========================= */
@@ -180,7 +377,7 @@ body {
 /* Bot */
 .bot {
     align-self: flex-start;
-    margin-left: 100px;
+    margin-left: 50px;
 
     background: rgba(255,255,255,0.7);
 
@@ -202,8 +399,8 @@ body {
     bottom: 25px;
     left: 55%;
     transform: translateX(-50%) scale(1);
-
-    width: 1200px;
+    height:30px;
+    width: 900px;
 
     padding: 12px 12px;
     border-radius: 50px;
@@ -259,13 +456,62 @@ body {
 /* Send Button */
 /* ========================= */
 
-.input-wrapper button {
-    width: 44px;
-    height: 44px;
+/* ========================= */
+/* Send Button (PRIMARY) */
+/* ========================= */
+
+#sendBtn {
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     border: none;
 
-    background: linear-gradient(145deg, #6c6cf0, #5b5bd6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(145deg, #4c6fff, #2f3bbd);
+    color: white;
+
+    font-size: 18px;
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+
+    /* 🔥 cleaner depth */
+    box-shadow:
+        4px 4px 12px rgba(47,59,189,0.35),
+        inset -2px -2px 6px rgba(255,255,255,0.2);
+}
+
+/* Hover */
+#sendBtn:hover {
+    transform: scale(1.12);
+    box-shadow:
+        0 0 20px rgba(76,111,255,0.6),
+        4px 4px 12px rgba(47,59,189,0.4);
+}
+
+/* Click */
+#sendBtn:active {
+    transform: scale(0.95);
+}
+
+/* ========================= */
+/* Stop Button (SECONDARY) */
+/* ========================= */
+
+#stopBtn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(145deg, #ff6b6b, #d62828);
     color: white;
 
     font-size: 16px;
@@ -274,19 +520,21 @@ body {
     transition: all 0.2s ease;
 
     box-shadow:
-        4px 4px 10px rgba(91,91,214,0.3);
+        4px 4px 10px rgba(214,40,40,0.3);
 }
 
-/* ✨ Button hover */
-.input-wrapper button:hover {
+#stopBtn:hover {
     transform: scale(1.1);
     box-shadow:
-        0 0 15px rgba(122,162,255,0.6);
+        0 0 15px rgba(255,107,107,0.6);
 }
 
-/* ✨ Button click */
-.input-wrapper button:active {
-    transform: scale(0.95);
+/* ========================= */
+/* Button spacing */
+/* ========================= */
+
+.input-wrapper {
+    gap: 10px; /* 👈 adds spacing between input & buttons */
 }
 
 /* ========================= */
