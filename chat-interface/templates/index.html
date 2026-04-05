@@ -9,54 +9,66 @@
 
 <div class="app">
 
+    <!-- Top Bar -->
+    <div class="top-bar">
+
+        <div id="statusBadge" class="status-badge status-ready">🟢 Ready</div>
+    </div>
+
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo">BlueTech AI</div>
+
+        <!-- Logo -->
+        <div class="sidebar-logo">
+            <div class="bot-icon">🤖</div>
+            <div class="bot-name">BlueTech AI</div>
+        </div>
+
+        <!-- Status -->
+        <div class="sidebar-status">
+            <div class="status-dot"></div>
+            <span>Online</span>
+        </div>
+
+        <!-- New Chat Button -->
         <button class="new-chat">New Chat</button>
-        <div class="history" id="history"></div>
+
     </div>
 
     <!-- Main Chat -->
     <div class="main">
 
-        <!-- 🔵 Top Bar -->
-        <div class="top-bar">
-            <div class="top-title">BlueTech AI</div>
-            <div class="top-status">
-                <span class="status-dot"></span>
-                Online
+        <div class="chat-stream" id="chatStream">
+
+            <div class="welcome-text" id="welcomeText">
+                Hi, Good day. How may I help you?
             </div>
-        </div>
 
-        <!-- Welcome Text -->
-        <div id="welcomeText" class="welcome-text">
-            Hi, Good day. How may I help you?
-        </div>
-
-        <!-- Chat Messages -->
-        <!-- Chat Container -->
-        <div class="chat-container">
-            <div class="chat-area" id="chat-area"></div>
-        </div>
-
-        <!-- Floating Glass Input -->
-        <div class="input-wrapper">
-            <input
-                type="text"
-                id="messageInput"
-                placeholder="Send a message..."
-            />
-            <button id="sendBtn">➤</button>
-            <button id="stopBtn" style="display:none;">⏹</button>
         </div>
 
     </div>
 
+    <!-- Input -->
+    <div class="input-wrapper">
+        <input
+            type="text"
+            id="messageInput"
+            placeholder="Send a message..."
+        />
+
+        <button id="sendBtn">➤</button>
+        <button id="stopBtn" style="display:none;">■</button>
+    </div>
+
 </div>
 
-<script src="/static/script.js"></script>
+<!-- Copyright -->
 <div class="copyright">
     © Santosh K
 </div>
+
+<!-- Script -->
+<script src="/static/script.js"></script>
+
 </body>
 </html>
