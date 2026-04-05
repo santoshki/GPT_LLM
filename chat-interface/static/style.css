@@ -121,6 +121,7 @@ body {
     margin-left: 5px;
     margin-top: 0px;
     width: 100px;
+    margin-bottom: 5px;
 
     /* 🔥 Darker blue gradient */
     background: linear-gradient(145deg, #2f3bbd, #4c6fff);
