@@ -1,10 +1,33 @@
+/* ========================= */
+/* Root Theme */
+/* ========================= */
+
+:root {
+    --bg: #e6e9ef;
+    --primary: #5b5bd6;
+    --accent-blue: #7aa2ff;
+
+    --text: #2d2f33;
+    --text-light: #6b7280;
+
+    --shadow-dark: rgba(0,0,0,0.08);
+    --shadow-light: rgba(255,255,255,0.7);
+}
+
+/* ========================= */
 /* Global */
+/* ========================= */
+
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: #ffffff;
     height: 100vh;
     overflow: hidden;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(122,162,255,0.25), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(91,91,214,0.2), transparent 45%),
+        var(--bg);
 }
 
 .app {
@@ -13,97 +36,315 @@ body {
 }
 
 /* ========================= */
-/* Sidebar */
+/* 3D GLASS TOP BAR */
+/* ========================= */
+
+.top-bar {
+    position: fixed;
+    top: 20px;
+    left: 55%;
+    transform: translateX(-50%);
+
+    width: 100px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    margin-top:-15px;
+
+    padding: 0 25px;
+    border-radius: 40px;
+
+    /* 🔥 Glass base */
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.55),
+        rgba(255,255,255,0.15)
+    );
+
+    backdrop-filter: blur(25px) saturate(160%);
+
+    /* 🔥 3D depth shadows */
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.12),   /* drop shadow */
+        inset 0 2px 6px rgba(255,255,255,0.6), /* top highlight */
+        inset 0 -4px 10px rgba(0,0,0,0.05);   /* bottom depth */
+
+    border: 1px solid rgba(255,255,255,0.4);
+
+    z-index: 100;
+}
+
+/* ✨ glossy reflection layer */
+.top-bar::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 10%;
+    width: 80%;
+    height: 40%;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.7),
+        transparent
+    );
+
+    border-radius: 40px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ✨ floating glow */
+.top-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    border-radius: 40px;
+
+    box-shadow:
+        0 0 30px rgba(122,162,255,0.25),
+        0 0 60px rgba(91,91,214,0.15);
+
+    opacity: 0.6;
+    z-index: -1;
+}
+
+/* ========================= */
+/* LOGO (3D TEXT STYLE) */
+/* ========================= */
+
+.logo {
+    font-weight: 700;
+    font-size: 18px;
+    margin-left: 5px;
+    margin-top: 0px;
+    width: 100px;
+    margin-bottom: 5px;
+
+    /* 🔥 Darker blue gradient */
+    background: linear-gradient(145deg, #2f3bbd, #4c6fff);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    /* 🔥 stronger 3D depth */
+    text-shadow:
+        1px 1px 0 rgba(255,255,255,0.4),
+        3px 3px 6px rgba(0,0,0,0.25);
+}
+
+/* ========================= */
+/* STATUS */
+/* ========================= */
+
+.top-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 60px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-top: 20px;
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        inset 2px 2px 6px rgba(0,0,0,0.05),
+        inset -2px -2px 6px rgba(255,255,255,0.7);
+
+    font-size: 14px;
+}
+
+/* 🔥 glowing status dot */
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+
+    box-shadow:
+        0 0 8px #22c55e,
+        0 0 16px rgba(34,197,94,0.6);
+}
+
+/* ========================= */
+/* Sidebar (Blue Theme) */
 /* ========================= */
 
 .sidebar {
-    width: 150px;
-    background: #0f172a;
-    padding: 20px;
-    border-right: 1px solid rgba(56,189,248,0.15);
+    width: 180px;
+
     display: flex;
     flex-direction: column;
-}
+    align-items: flex-start;
 
-.logo {
-    font-size: 20px;
-    font-weight: bold;
-    color: #38bdf8;
-    margin-bottom: 25px;
-    margin-left: 15px;
-}
+    padding: 20px 15px;
 
-.new-chat {
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 20px;
-    transition: 0.2s ease;
-}
+    background: linear-gradient(
+        160deg,
+        rgba(91,91,214,0.9),
+        rgba(122,162,255,0.75)
+    );
 
-.new-chat:hover {
-    background: #1d4ed8;
-}
+    backdrop-filter: blur(20px);
 
-.history {
-    flex: 1;
-    overflow-y: auto;
-}
+    box-shadow:
+        8px 0 20px rgba(0,0,0,0.15),
+        inset 2px 2px 6px rgba(255,255,255,0.2),
+        inset -2px -2px 6px rgba(0,0,0,0.1);
 
-.history div {
-    padding: 8px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    background: #1e293b;
-    color: #cbd5e1;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.2s ease;
-}
-
-.history div:hover {
-    background: #334155;
+    border-right: 1px solid rgba(255,255,255,0.2);
 }
 
 /* ========================= */
-/* Main Chat Area */
+/* Chatbot Logo */
+/* ========================= */
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 30px;
+    margin-left: 10px;
+}
+/* ========================= */
+/* Sidebar Bottom Status */
+/* ========================= */
+
+.sidebar-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-left: 10px;
+    margin-top: -10px;   /* 🔥 pulls it closer to logo */
+    margin-bottom: 20px; /* 🔥 space before button */
+
+    padding: 6px 12px;
+    border-radius: 20px;
+
+    font-size: 13px;
+    color: white;
+
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        inset 2px 2px 6px rgba(0,0,0,0.1),
+        inset -2px -2px 6px rgba(255,255,255,0.2);
+}
+/* 🤖 Icon bubble */
+.bot-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+
+    background: linear-gradient(145deg, #ffffff, #dbe4ff);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+
+    /* 🔥 neumorphic pop */
+    box-shadow:
+        4px 4px 10px rgba(0,0,0,0.2),
+        -2px -2px 6px rgba(255,255,255,0.8);
+}
+
+/* 🤖 text */
+.bot-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+/* ========================= */
+/* Compact Premium Button */
+/* ========================= */
+
+.new-chat {
+    display: inline-flex;        /* 🔥 prevents full width */
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 16px;          /* 👈 reduced */
+    width: 150px;          /* 🔥 shrink to content */
+
+    border-radius: 12px;
+    border: none;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 14px;
+    font-weight: 500;
+
+    color: var(--text);
+
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.9),
+        rgba(230,233,239,0.6)
+    );
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        6px 6px 6px rgba(0,0,0,0.08),
+        -1px -1px 6px rgba(255,255,255,0.9);
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Hover */
+.new-chat:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        8px 8px 18px rgba(0,0,0,0.12),
+        -6px -6px 14px rgba(255,255,255,1),
+        0 0 10px rgba(122,162,255,0.25);
+}
+
+/* Click */
+.new-chat:active {
+    transform: scale(0.97);
+
+    box-shadow:
+        inset 4px 4px 10px rgba(0,0,0,0.1),
+        inset -4px -4px 10px rgba(255,255,255,0.8);
+}
+
+/* ========================= */
+/* Main */
 /* ========================= */
 
 .main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    position: relative;
-    background: #f8fafc;
+    padding-top: 60px;
 }
 
-/* Centered Welcome Text */
-.welcome-text {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 32px;
-    font-weight: 600;
-    color: #0f172a;
-    transition: opacity 0.3s ease;
-}
+/* ========================= */
+/* Chat Stream */
+/* ========================= */
 
-/* Hide welcome after chat starts */
-.main.chat-started .welcome-text {
-    display: none;
-}
-
-/* Chat Area */
-.chat-area {
+.chat-stream {
     flex: 1;
-    padding: 30px 15%;
     overflow-y: auto;
+
     display: flex;
     flex-direction: column;
+    align-items: center;
+
+    padding: 30px 0;
 }
 
 /* ========================= */
@@ -111,239 +352,229 @@ body {
 /* ========================= */
 
 .message {
-    margin: 10px 0;
-    padding: 14px 18px;
-    border-radius: 14px;
-    max-width: 65%;
-    line-height: 1.4;
-    font-size: 15px;
-    word-wrap: break-word;
-    animation: fadeIn 0.2s ease-in;
-}
-
-.user {
-    background: #2563eb;
-    color: white;
-    margin-left: auto;
-    border-bottom-right-radius: 4px;
-}
-
-.bot {
-    background: #e2e8f0;
-    color: #0f172a;
-    margin-right: auto;
-    border-bottom-left-radius: 4px;
-}
-
-/* ========================= */
-/* Glass Input Area */
-/* ========================= */
-
-.input-wrapper {
-    position: sticky;
-    bottom: 20px;
-    margin: 0 auto 25px auto;
-    width: 85%;
-    display: flex;
-    align-items: center;
-    backdrop-filter: blur(20px);
-    background: rgba(255,255,255,0.6);
-    padding: 10px 15px;
-    border-radius: 50px;
-    border: 1px solid rgba(56,189,248,0.3);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
-}
-
-.input-wrapper input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #0f172a;
-    padding: 10px;
-    font-size: 14px;
-}
-
-.input-wrapper button {
-    background: #38bdf8;
-    border: none;
-    border-radius: 50%;
-    width: 42px;
-    height: 42px;
-    cursor: pointer;
-    color: white;
-    font-size: 16px;
-    transition: 0.2s ease;
-}
-
-.input-wrapper button:hover {
-    background: #0ea5e9;
-}
-
-/* ========================= */
-/* Animations */
-/* ========================= */
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ========================= */
-/* Scrollbar Styling */
-/* ========================= */
-
-.chat-area::-webkit-scrollbar {
-    width: 6px;
-}
-
-.chat-area::-webkit-scrollbar-thumb {
-    background: rgba(56,189,248,0.5);
-    border-radius: 10px;
-}
-
-/* ========================= */
-/* Mobile Responsive */
-/* ========================= */
-
-@media (max-width: 900px) {
-
-    .sidebar {
-        display: none;
-    }
-
-    .chat-area {
-        padding: 20px;
-    }
-
-    .input-wrapper {
-        width: 92%;
-    }
-
-    .message {
-        max-width: 85%;
-    }
-}
-
-/* ========================= */
-/* Top Bar */
-/* ========================= */
-
-.top-bar {
-    height: 60px;
     width: 100%;
-    position: sticky;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-    backdrop-filter: blur(20px);
-    background: linear-gradient(
-        90deg,
-        rgba(37,99,235,0.9),
-        rgba(56,189,248,0.85)
-    );
-    color: white;
-    z-index: 10;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-}
+    max-width: 500px;
 
-.top-title {
-    font-size: 25px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-left: 500px;
-}
-
-.top-status {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    gap: 8px;
-    margin-right: 80px;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    background: #22c55e;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #22c55e;
-    align-items: center;
-}
-
-/* Adjust chat padding so it doesn't overlap */
-.chat-area {
-    padding-top: 20px;
-}
-
-/* ========================= */
-/* Central Chat Container */
-/* ========================= */
-
-.chat-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    padding: 30px 0;
-    overflow: hidden;
-}
-
-.chat-area {
-    width: 90%;
-    max-width: 1000px;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 30px;
-    overflow-y: auto;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-    border: 1px solid rgba(37,99,235,0.08);
-}
-
-/* ========================= */
-/* Message Styling */
-/* ========================= */
-
-.message {
-    margin-bottom: 20px;
+    margin: 20px 0;
     padding: 16px 20px;
+
     border-radius: 12px;
-    font-size: 15px;
+    font-size: 16px; /* 🔥 Increased */
     line-height: 1.6;
 }
 
-/* User Message */
+/* User */
 .user {
-    background: rgba(37,99,235,0.9);
+    align-self: flex-end;
+    margin-right: 100px;
+
+    background: linear-gradient(145deg, #6c6cf0, #5b5bd6);
+    color: white;
+
+    box-shadow:
+        4px 4px 10px rgba(91,91,214,0.3);
 }
 
-/* Bot Message */
+/* Bot */
 .bot {
-    background: rgba(56,189,248,0.12);
-    border-left: 4px solid #0f172a;
-    font-size: 15px;
-    font-family: 'Segoe UI';
+    align-self: flex-start;
+    margin-left: 50px;
+
+    background: rgba(255,255,255,0.7);
+
+    box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light);
 }
-#stopBtn {
-    margin-left: 8px;
-    background: #ff4d4f;
-    color: white;
+
+/* ========================= */
+/* Input */
+/* ========================= */
+
+/* ========================= */
+/* Animated Input Wrapper */
+/* ========================= */
+
+.input-wrapper {
+    position: fixed;
+    bottom: 25px;
+    left: 55%;
+    transform: translateX(-50%) scale(1);
+    height:30px;
+    width: 1000px;
+
+    padding: 12px 12px;
+    border-radius: 50px;
+
+    display: flex;
+    align-items: center;
+
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(20px);
+
+    /* 🔥 Soft neumorphism */
+    box-shadow:
+        6px 6px 14px rgba(0,0,0,0.08),
+        -2px -2px 6px rgba(255,255,255,0.1);
+
+    transition: all 0.25s ease;
+}
+
+/* ✨ Hover lift */
+.input-wrapper:hover {
+    transform: translateX(-50%) scale(1.02);
+
+    box-shadow:
+        2px 2px 12px rgba(0,0,0,0.12),
+        -2px -2px 12px rgba(255,255,255,0.8);
+}
+
+/* 💡 Focus animation */
+.input-wrapper:focus-within {
+    transform: translateX(-50%) scale(1.03);
+
+    box-shadow:
+        inset 2px 2px 6px rgba(0,0,0,0.05),
+        inset -4px -4px 12px rgba(255,255,255,0.9),
+        0 0 20px rgba(122,162,255,0.35);
+}
+
+/* ========================= */
+/* Input Field */
+/* ========================= */
+
+.input-wrapper input {
+    flex: 1;
     border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
+    outline: none;
+    background: transparent;
+
+    font-size: 16px;
+    color: var(--text);
+}
+
+/* ========================= */
+/* Send Button */
+/* ========================= */
+
+/* ========================= */
+/* Send Button (PRIMARY) */
+/* ========================= */
+
+#sendBtn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(145deg, #4c6fff, #2f3bbd);
+    color: white;
+
+    font-size: 18px;
     cursor: pointer;
+
+    transition: all 0.25s ease;
+
+    /* 🔥 cleaner depth */
+    box-shadow:
+        4px 4px 12px rgba(47,59,189,0.35),
+        inset -2px -2px 6px rgba(255,255,255,0.2);
+}
+
+/* Hover */
+#sendBtn:hover {
+    transform: scale(1.12);
+    box-shadow:
+        0 0 20px rgba(76,111,255,0.6),
+        4px 4px 12px rgba(47,59,189,0.4);
+}
+
+/* Click */
+#sendBtn:active {
+    transform: scale(0.95);
+}
+
+/* ========================= */
+/* Stop Button (SECONDARY) */
+/* ========================= */
+
+#stopBtn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(145deg, #ff6b6b, #d62828);
+    color: white;
+
+    font-size: 16px;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+    box-shadow:
+        4px 4px 10px rgba(214,40,40,0.3);
 }
 
 #stopBtn:hover {
-    background: #d9363e;
+    transform: scale(1.1);
+    box-shadow:
+        0 0 15px rgba(255,107,107,0.6);
 }
+
+/* ========================= */
+/* Button spacing */
+/* ========================= */
+
+.input-wrapper {
+    gap: 10px; /* 👈 adds spacing between input & buttons */
+}
+
+/* ========================= */
+/* Welcome Text */
+/* ========================= */
+
+.welcome-text {
+    margin-top: 160px;
+    font-size: 30px; /* 🔥 Bigger */
+    font-weight: 600;
+
+    background: linear-gradient(145deg, #6c6cf0, #7aa2ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ========================= */
+/* Scrollbar */
+/* ========================= */
+
+.chat-stream::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-stream::-webkit-scrollbar-thumb {
+    background: rgba(91,91,214,0.4);
+}
+.chat-stream {
+    padding-bottom: 120px;
+}
+/* ========================= */
+/* Copyright */
+/* ========================= */
+
 .copyright {
     position: fixed;
-    bottom: 10px;
-    right: 15px;
-    font-size: 12px;
-    color: rgba(15, 23, 42, 0.6);
-    font-weight: 500;
-    pointer-events: none; /* 👈 so it doesn't block clicks */
+    bottom: 15px;
+    right: 20px;
+
+    font-size: 13px;
+    color: var(--text-light);
 }
