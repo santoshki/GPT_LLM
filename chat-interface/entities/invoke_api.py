@@ -86,7 +86,13 @@ def retrieve(query, min_score_threshold=4):
         keyword_words = set(normalize(" ".join(entry.get("keywords", []))).split())
 
         overlap_score = len(query_words & question_words)
-        keyword_score = len(query_words & keyword_words) * 3
+        keyword_score = 0
+        for word in query_words:
+            if word in keyword_words:
+                if word in ["protein", "eggs", "routine", "exercise"]:
+                    keyword_score += 5  # 🔥 strong signal
+                else:
+                    keyword_score += 2
         fuzzy_score = int(difflib.SequenceMatcher(None, query_norm, question_norm).ratio() * 4)
 
         total_score = overlap_score + keyword_score + fuzzy_score
@@ -139,7 +145,7 @@ Rephrase the answer:
             model="llama-3.3-70b-versatile",
             messages=messages,
             temperature=0.5,
-            max_completion_tokens=300
+            max_tokens=500
         )
 
         response = completion.choices[0].message.content.strip()
