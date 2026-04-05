@@ -1,66 +1,48 @@
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware
-import asyncio
-from entities import invoke_llm, invoke_api
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 
-app = FastAPI()
+from entities import invoke_api
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = Flask(__name__)
+CORS(app)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+# -------------------------
+# UI Route
+# -------------------------
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+# -------------------------
+# Chat API
+# -------------------------
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    user_message = data.get("message", "")
 
-
-# ✅ WebSocket endpoint (THIS WAS MISSING)
-@app.websocket("/ws/chat")
-async def websocket_chat(websocket: WebSocket):
-    await websocket.accept()
-    conversation_history = []
+    print("User:", user_message)
 
     try:
-        while True:
-            user_message = await websocket.receive_text()
-            print("User:", user_message)
+        # bot_response = invoke_llm.generate_model_response(user_message)
+        bot_response = invoke_api.generate_response(user_message)
+    except Exception as e:
+        print("Error:", e)
+        bot_response = None
 
-            conversation_history.append(f"User: {user_message}")
-            conversation_history = conversation_history[-6:]
+    if not isinstance(bot_response, str) or not bot_response.strip():
+        bot_response = "I'm not sure I understand. Could you explain more?"
 
-            context = "\n".join(conversation_history)
+    print("Bot:", bot_response)
 
-            try:
-                #bot_response = invoke_llm.generate_model_response(user_message, conversation_history)
-                bot_response = invoke_api.generate_response(user_message)
-            except Exception as e:
-                print("Model error:", e)
-                bot_response = None
+    return jsonify({
+        "response": bot_response
+    })
 
-            if not isinstance(bot_response, str) or not bot_response.strip():
-                bot_response = "I'm not sure I understand. Could you explain more?"
 
-            print("Bot:", bot_response)
-
-            partial = ""
-            for char in bot_response:
-                partial += char
-                await websocket.send_text(partial)
-                await asyncio.sleep(0.01)
-
-            conversation_history.append(f"Bot: {bot_response}")
-            conversation_history = conversation_history[-6:]
-
-    except WebSocketDisconnect:
-        print("Client disconnected")
+# -------------------------
+# Run App
+# -------------------------
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000, debug=True)

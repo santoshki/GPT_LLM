@@ -1,0 +1,62 @@
+[
+  {
+    "question": "Why is breakfast important?",
+    "answer": "Breakfast is important because it gives your body energy to start the day and improves focus and productivity.",
+    "keywords": ["breakfast", "important", "morning", "energy"]
+  },
+  {
+    "question": "What is a healthy breakfast?",
+    "answer": "A healthy breakfast includes protein, fiber, and nutrients such as eggs, fruits, and whole grains.",
+    "keywords": ["healthy", "breakfast", "food", "morning meal"]
+  },
+  {
+    "question": "Are eggs good for breakfast?",
+    "answer": "Yes, eggs are a great source of protein and are considered a healthy breakfast option.",
+    "keywords": ["eggs", "breakfast", "protein", "healthy"]
+  },
+  {
+    "question": "Why should I eat eggs daily?",
+    "answer": "Eating eggs daily provides essential nutrients and protein that help in muscle strength and overall health.",
+    "keywords": ["eggs", "daily", "benefits", "protein"]
+  },
+  {
+    "question": "What are good morning habits?",
+    "answer": "Good morning habits include waking up early, eating a healthy breakfast, and staying hydrated.",
+    "keywords": ["morning", "habits", "routine", "healthy"]
+  },
+  {
+    "question": "Why is a daily routine important?",
+    "answer": "A daily routine helps improve productivity, reduces stress, and builds discipline.",
+    "keywords": ["routine", "daily", "importance", "discipline"]
+  },
+  {
+    "question": "How can I stay healthy every day?",
+    "answer": "You can stay healthy by maintaining a balanced diet, exercising regularly, and following consistent habits.",
+    "keywords": ["healthy", "daily", "fitness", "lifestyle"]
+  },
+  {
+    "question": "What should I eat in the morning?",
+    "answer": "You should eat nutritious foods like eggs, fruits, and whole grains in the morning.",
+    "keywords": ["eat", "morning", "food", "breakfast"]
+  },
+  {
+    "question": "Why is protein important in breakfast?",
+    "answer": "Protein in breakfast helps keep you full longer and supports muscle growth and repair.",
+    "keywords": ["protein", "breakfast", "importance", "nutrition"]
+  },
+  {
+    "question": "How to build good habits?",
+    "answer": "You can build good habits by starting small, staying consistent, and tracking your progress daily.",
+    "keywords": ["habits", "build", "routine", "consistency"]
+  },
+  {
+    "question": "Why should I drink water in the morning?",
+    "answer": "Drinking water in the morning helps hydrate your body and kickstarts your metabolism.",
+    "keywords": ["water", "morning", "hydration", "health"]
+  },
+  {
+    "question": "What are simple healthy habits?",
+    "answer": "Simple healthy habits include eating on time, staying active, sleeping well, and drinking enough water.",
+    "keywords": ["healthy", "habits", "simple", "lifestyle"]
+  }
+]
