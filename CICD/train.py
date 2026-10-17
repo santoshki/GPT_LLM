@@ -89,9 +89,24 @@ if min(len(train_data), len(val_data)) <= block_size:
 def get_batch(split_name):
     dataset = train_data if split_name == "train" else val_data
 
-    ix = torch.randint(len(dataset) - block_size, (batch_size,))
-    x = torch.stack([dataset[i:i + block_size] for i in ix])
-    y = torch.stack([dataset[i + 1:i + block_size + 1] for i in ix])
+    max_start = len(dataset) - block_size - 1
+    if max_start < 0:
+        raise ValueError(
+            f"Dataset too small for block_size={block_size}"
+        )
+
+    ix = torch.randint(
+        low=0,
+        high=max_start + 1,
+        size=(batch_size,)
+    )
+
+    x = torch.stack([
+        dataset[i:i + block_size] for i in ix
+    ])
+    y = torch.stack([
+        dataset[i + 1:i + block_size + 1] for i in ix
+    ])
 
     return x.to(device), y.to(device)
 
@@ -118,8 +133,10 @@ class MultiHeadAttention(nn.Module):
 
         scores = (q @ k.transpose(-2, -1)) / (self.head_dim ** 0.5)
 
-        mask = torch.tril(torch.ones(T, T, device=device))
-        scores = scores.masked_fill(mask == 0, float('-inf'))
+        mask = torch.tril(
+            torch.ones(T, T, device=x.device, dtype=torch.bool)
+        )
+        scores = scores.masked_fill(~mask, float("-inf"))
 
         attn = torch.softmax(scores, dim=-1)
         attn = self.dropout(attn)
