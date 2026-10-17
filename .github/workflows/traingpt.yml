@@ -1,0 +1,62 @@
+
+name: Train SimpleGPT Model and Upload to Hugging Face
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      MAX_ITERS: "1000"
+      EVAL_INTERVAL: "100"
+      PYTHONUNBUFFERED: "1"
+      HF_REPO_ID: "Santoshki/mini-llm-alphav1"
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Verify PyTorch installation
+        run: |
+          python -c "import torch; print('PyTorch:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"
+
+      - name: Train SimpleGPT
+        run: |
+          python CICD/train.py
+
+      - name: Upload trained model to Hugging Face
+        if: success() && env.HF_TOKEN != ''
+        run: |
+          python upload.py
+
+      - name: Skip Hugging Face upload when token is missing
+        if: success() && env.HF_TOKEN == ''
+        run: |
+          echo "HF_TOKEN is not configured. Skipping upload to Hugging Face."
+
+      - name: Upload trained model artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simplegpt-model
+          path: outputs/
+          if-no-files-found: warn
+          retention-days: 14
