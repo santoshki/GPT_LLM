@@ -17,7 +17,7 @@ n_heads = 4
 n_layers = 2
 dropout = 0.1
 block_size = 256
-batch_size = 32
+batch_size = 16
 learning_rate = 3e-4
 
 # Override these through GitHub Actions environment variables
