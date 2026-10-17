@@ -145,6 +145,21 @@ if __name__ == "__main__":
             break
 
         prompt = f"User: {question}\nAssistant: "
-        result = generate(model, prompt, stoi, itos, max_new_tokens=30, temperature=0.7)
-        bot_reply = result.split("Assistant:")[-1].strip()
+
+        result = generate(
+            model,
+            prompt,
+            stoi,
+            itos,
+            max_new_tokens=60,
+            temperature=0.5,
+        )
+
+        bot_reply = result[len(prompt):].strip()
+
+        # Stop if the model begins another conversation turn.
+        for marker in ("\nUser:", "\nAssistant:"):
+            if marker in bot_reply:
+                bot_reply = bot_reply.split(marker, 1)[0].strip()
+
         print(f"Bot: {bot_reply}\n")
