@@ -151,15 +151,15 @@ if __name__ == "__main__":
             prompt,
             stoi,
             itos,
-            max_new_tokens=60,
+            max_new_tokens=100,
             temperature=0.5,
         )
 
-        bot_reply = result[len(prompt):].strip()
+        answer = result[len(prompt):].strip()
 
-        # Stop if the model begins another conversation turn.
-        for marker in ("\nUser:", "\nAssistant:"):
-            if marker in bot_reply:
-                bot_reply = bot_reply.split(marker, 1)[0].strip()
+        # Stop when the next conversation turn begins.
+        for marker in ("\nUser:", "\nAssistant:", "\nBot:"):
+            if marker in answer:
+                answer = answer.split(marker, 1)[0].strip()
 
-        print(f"Bot: {bot_reply}\n")
+        print(f"Bot: {answer or '[No response generated]'}")

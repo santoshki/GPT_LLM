@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     env:
-      MAX_ITERS: "1000"
-      EVAL_INTERVAL: "100"
+      MAX_ITERS: "5000"
+      EVAL_INTERVAL: "500"
       PYTHONUNBUFFERED: "1"
       HF_REPO_ID: "Santoshki/mini-llm-alphav1"
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
