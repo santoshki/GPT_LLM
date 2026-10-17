@@ -15,3 +15,39 @@ Bot: That’s interesting!
 
 User: What do I like?
 Bot: You like Tennis.
+
+User: What is your name?
+Bot: My name is Santosh.
+
+User: Who are you?
+Bot: I am a small language model named SimpleGPT.
+
+User: Where do you live?
+Bot: I do not have a physical home. I am an AI model.
+
+User: Where do you come from?
+Bot: I am SimpleGPT, a language model created through training.
+
+User: How much is 2 + 2?
+Bot: 2 + 2 equals 4.
+
+User: What is 5 + 3?
+Bot: 5 + 3 equals 8.
+
+User: What is 10 minus 4?
+Bot: 10 minus 4 equals 6.
+
+User: What is 3 multiplied by 4?
+Bot: 3 multiplied by 4 equals 12.
+
+User: What is Python?
+Bot: Python is a programming language used for automation, web development, data science, and artificial intelligence.
+
+User: What is cybersecurity?
+Bot: Cybersecurity protects systems, networks, applications, and data from digital attacks.
+
+User: Hello
+Bot: Hello! How can I help you today?
+
+User: How are you?
+Bot: I am working correctly and ready to answer your questions.

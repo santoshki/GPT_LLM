@@ -14,7 +14,7 @@ d_model = 128
 n_heads = 4
 n_layers = 2
 dropout = 0.1
-block_size = 128
+block_size = 256
 
 class MultiHeadAttention(nn.Module):
     def __init__(self):
